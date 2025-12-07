@@ -1,9 +1,9 @@
 import React, {useEffect, useState } from "react";
-import {createContact, getAllContacts, /*getContact, updateContact,*/ deleteContact} from "./api/contacts.js";
+import {createContact, getAllContacts, /*getContact, updateContact,*/ deleteContact} from "./api/contactsApi.js";
 
 function App (){
   const [contacts, setContacts] = useState([]);
-  const [form, setForm] = useState({name: "",phone1: ""});
+  const [form, setForm] = useState({name: "",email:"",phone1: ""});
 
   //Carreguem info
   useEffect(()=>{
@@ -18,7 +18,7 @@ function App (){
   async function handleSubmit(e) {
     e.preventDefault();
     await createContact(form);
-    setForm({name:"",phone1:""});
+    setForm({name:"",email:"",phone1:""});
     loadContacts();
   }
 
@@ -40,6 +40,12 @@ function App (){
         />
         <br/>
         <input
+          placeholder="Email"
+          value={form.email}
+          onChange={e =>setForm({...form, email: e.target.value})}
+        />
+        <br />
+        <input
           placeholder="Telefon 1"
           value={form.phone1}
           onChange={e =>setForm({...form, phone1: e.target.value})}
@@ -51,11 +57,11 @@ function App (){
       <h2>Llista de Contactes</h2>
       <ul>
         {contacts.map(contact =>(
-          <li key={contact.id}>
-            **{contact.name}** — {contact.email} — {contact.phone1}
-            <button onClick={()=>handledelete(contact.id)}>Esborrar</button>
+          <li key={contact._id}>
+            <b>{contact.name}</b> - {contact.email} - {contact.phone1} - <em />
+            <button onClick={()=>handledelete(contact._id)}>Esborrar</button>
           </li>
-        ))};
+        ))}
       </ul>
     </div>
   );

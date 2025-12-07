@@ -42,5 +42,5 @@ export async function deleteContact(id) {
         method: "DELETE"
     });
     if (!res.ok) throw new Error("Error while deleting contact");
-    return res.json();0  
+    return res.json();
 };
