@@ -18,13 +18,6 @@ export async function getAllContacts(){
     return res.json();
 };
 
-//Read one
-export async function getContact(id){
-    const res = await fetch (`${API_URL}/${id}`);
-    if (!res.ok) throw new Error("Error while geting contact");
-    return res.json();
-};
-
 //Update
 export async function updateContact(id, data) {
     const res = await fetch (`${API_URL}/${id}`,{

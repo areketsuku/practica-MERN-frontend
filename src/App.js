@@ -1,20 +1,44 @@
 import React, {useEffect, useState } from "react";
-import {createContact, getAllContacts, /*getContact,*/ deleteContact, updateContact} from "./api/contactsApi.js";
+import {createContact, getAllContacts, deleteContact, updateContact} from "./api/contactsApi.js";
 
 function App (){
+  const [allContacts, setAllContacts] = useState([]);
   const [contacts, setContacts] = useState([]);
   const [form, setForm] = useState({name: "",email:"",phone1: ""});
   const [editingId, setEditingId] = useState(null);
 
-  //Carreguem info
   useEffect(()=>{
     loadContacts();
   },[]);
 
   async function loadContacts() {
     const data = await getAllContacts();
+    setAllContacts(data);
     setContacts(data);
   };
+
+  function filterContacts(formData) {
+
+    const isEmpty = !formData.name && !formData.email && !formData.phone1;
+    
+    if (isEmpty) {
+      setContacts(allContacts);
+      return;
+    }
+
+    const filtered = allContacts.filter(contact => {
+      const matchesName = contact.name?.toLowerCase().includes(formData.name.toLowerCase());
+      const matchesEmail = contact.email?.toLowerCase().includes(formData.email.toLowerCase());
+      const matchesPhone1 = contact.phone1?.toString().includes(formData.phone1.toString());
+
+      return (
+        (formData.name ? matchesName : true) &&
+        (formData.email ? matchesEmail : true) &&
+        (formData.phone1 ? matchesPhone1 : true)
+      );
+    });
+    setContacts(filtered);
+  }
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -33,7 +57,7 @@ function App (){
     loadContacts();
   }
 
-  async function handleEdit(contact) {
+  function handleEdit(contact) {
     setEditingId(contact._id);
     setForm({
       name: contact.name,
@@ -51,19 +75,31 @@ function App (){
         <input
           placeholder="Nom"
           value={form.name}
-          onChange={e =>setForm({...form, name: e.target.value})}
+          onChange={e => {
+            const updated = {...form, name: e.target.value};
+            setForm(updated);
+            filterContacts(updated);
+            }}
         />
         <br/>
         <input
           placeholder="Email"
           value={form.email}
-          onChange={e =>setForm({...form, email: e.target.value})}
+          onChange={e => {
+            const updated = {...form, email: e.target.value};
+            setForm(updated);
+            filterContacts(updated);
+            }}
         />
         <br />
         <input
           placeholder="Telefon 1"
           value={form.phone1}
-          onChange={e =>setForm({...form, phone1: e.target.value})}
+          onChange={e => {
+            const updated = {...form, phone1: e.target.value};
+            setForm(updated);
+            filterContacts(updated);
+            }}
         />
         <br />
         <button type="submit">{editingId?"Guardar":"Crear"}</button>
